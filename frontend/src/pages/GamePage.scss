@@ -1,0 +1,248 @@
+//заглушка - пояснить потом
+
+.game-page {
+  padding: 86px 16px 76px;
+  background: #1A1F26;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'SF Pro Text', sans-serif;
+  color: #fff;
+}
+
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: #2B313A;
+  padding: 12px 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;                    
+    left: 50%;
+    transform: translate(-50%, -100%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #69AFFF;
+    z-index: 10;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #69AFFF;
+    z-index: 10;
+  }
+
+  
+  .carousel-track {
+    display: flex;
+    gap: 12px;
+
+    padding: 0 calc(50% - 40px);
+    box-sizing: content-box;
+
+    animation: scroll 8s linear infinite;
+  }
+
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+}
+
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  width: 80px;
+  text-align: center;
+  background: #2B313A;
+  border-radius: 8px;
+  padding: 8px 0;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+  position: relative;
+
+  .item-img {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 4px;
+    object-fit: contain;
+  }
+
+  .item-price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .star {
+      width: 16px;
+      height: 16px;
+      margin-right: 4px;
+    }
+    span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+  }
+
+  &.won {
+    background-color: rgba(105, 175, 255, 0.1);
+
+   
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #69AFFF;
+      animation: fade-in 0.3s ease-out forwards;
+    }
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.play-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: #297EF1;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  margin: 12px 0;
+  cursor: pointer;
+
+  .star-inline {
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+
+  .btn {
+    flex: 1;
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &.sell {
+      background: #297EF1;
+      color: #fff;
+      &:hover { background: #1f6fcc; }
+    }
+
+    &.claim {
+      background: #69AFFF;
+      color: #20272F;
+      &:hover { background: #58a3dd; }
+    }
+
+    .star-inline {
+      width: 18px;
+      height: 18px;
+      margin-left: 6px;
+    }
+  }
+}
+
+.chance-block {
+  margin-top: 16px;
+
+  .chance-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .chance-list {
+    background: #2B313A;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .chance-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      background: #20272F;
+      border-radius: 6px;
+
+      .icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        object-fit: cover;
+        margin-right: 12px;
+      }
+
+      .info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1;
+
+        .name {
+          font-size: 12px;
+          color: #fff;
+          flex: 1;
+        }
+
+        .price {
+          display: flex;
+          align-items: center;
+
+          .star {
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+          }
+          span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}

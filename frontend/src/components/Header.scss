@@ -1,0 +1,85 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: #20272F;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  z-index: 999;
+
+  .header__profile {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: #fff; // белый цвет текста
+
+    .profile-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px; // отступ справа от аватарки
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+
+      .profile-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+      }
+
+      .profile-stars {
+        font-size: 12px;
+        font-weight: 400;
+        color: #aaa; // светло-серый цвет текста для звёзд
+      }
+    }
+  }
+
+  .header__balance {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .balance-button {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+
+      .balance-background {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background-image: url("../assets/buttonsicons/backstarbutton.png");
+        background-size: cover;
+        background-position: center;
+        width: 70px;
+        height: 30px;
+        border-radius: 50px;
+        padding: 5px;
+      }
+
+      .star-icon, .plus-icon {
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+      }
+
+      .plus-icon {
+        margin-left: 5px;
+      }
+    }
+  }
+}

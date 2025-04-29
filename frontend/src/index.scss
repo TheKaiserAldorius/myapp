@@ -1,0 +1,25 @@
+
+
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: sans-serif;
+  background: #20272F;
+}
+
+.app {
+  padding-bottom: 30px; // Отступ под футер
+  min-height: 60%;
+}
+
+.page {
+  padding: 20px;
+  padding-bottom: 40px; // Чтоб текст не налезал на футер
+}
+
+
+.main-content {
+  padding-top: 16px;   // чтобы контент не заезжал под header
+  padding-bottom: 70px; // чтобы контент не заезжал под bottom nav
+}

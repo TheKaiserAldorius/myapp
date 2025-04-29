@@ -1,0 +1,30 @@
+.balance-badge {
+    display: flex;
+    align-items: center;
+    background-color: #20272F;
+    padding: 6px 12px;
+    border-radius: 16px;
+    border: 1px solid var(--tg-theme-hint-color, #ccc);
+    font-weight: bold;
+    font-size: 14px;
+    gap: 8px;
+    color: var(--tg-theme-text-color, #4C5B6C);
+  
+    &__amount {
+      white-space: nowrap;
+    }
+  
+    &__topup {
+      background-color: var(--tg-theme-button-color, #2a8bf2);
+      color: var(--tg-theme-button-text-color, #fff);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 18px;
+      line-height: 24px;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
+  

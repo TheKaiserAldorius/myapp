@@ -1,0 +1,117 @@
+.profile-page {
+    padding: 86px 16px 76px; 
+    background-color: #1A1F26;
+    min-height: 100vh;
+    box-sizing: border-box;
+    color: #fff;
+    font-family: 'SF Pro Text', sans-serif;
+  }
+  
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    background: #2B313A;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 16px;
+  
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+  
+    .profile-info {
+      .name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+      }
+      .rank {
+        font-size: 12px;
+        color: #A5A5A5;
+        margin-top: 2px;
+      }
+    }
+  }
+  
+
+  .gifts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .gift-item {
+    display: flex;
+    align-items: center;
+    background: #2B313A;
+    border-radius: 8px;
+    padding: 8px;
+  
+    .gift-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+  
+    .gift-details {
+      flex: 1;
+  
+      .gift-id {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+      }
+      .gift-stars {
+        display: flex;
+        align-items: center;
+        margin-top: 4px;
+        gap: 4px; 
+      
+        .star-icon {
+          width: 16px;
+          height: 16px;
+        }
+      
+        span {
+          font-size: 12px;
+          color: #A5A5A5;
+        }
+      }
+    }
+  
+    .gift-actions {
+      display: flex;
+      gap: 8px;
+    
+      .btn {
+        padding: 6px 16px;       
+        font-size: 12px;
+        font-weight: 500;
+        border: none;
+        border-radius: 12px;     
+        cursor: pointer;
+        background-color: #3A3F4B; 
+        color: #FFFFFF;         
+        transition: background-color 0.2s;
+    
+        &:hover {
+          background-color: #505761; 
+        }
+    
+        &.claim {
+          /* можно отдельно стилизовать, если потребуется */
+        }
+        &.sell {
+          /* или оставить без отличий, ну это потом */
+        }
+      }
+    }
+  }    
+    
