@@ -1,48 +1,61 @@
-import React from 'react';
-import './ProfilePage.scss';
-import profileImage from '../assets/iconitems/profile.png';
-import eggImage      from '../assets/iconitems/cake.png';      // для примера
-import ringImage     from '../assets/iconitems/ring.png';
-import clownImage    from '../assets/iconitems/clownbox.png';
-import starIcon from '../assets/buttonsicons/StarTg.png';
+import React, { useEffect, useState } from 'react'
+import { useUserStore } from '../store/useUserStore'
+import './ProfilePage.scss'
 
-const userGifts = [
-  { id: '#66072', img: eggImage,   stars: 200 },
-  { id: '#66244', img: ringImage,  stars: 2500 },
-  { id: '#36452', img: clownImage, stars: 25 },
-];
+export default function ProfilePage() {
+  const { user, balance } = useUserStore()
+  const [gifts, setGifts] = useState([])
+  const [rank, setRank] = useState(null)
 
-const ProfilePage = () => {
+  useEffect(() => {
+    if (!user) return
+    // Fetch user gifts
+    fetch(`/api/user/gifts?telegram_id=${user.telegram_id}`)
+      .then(r => r.json())
+      .then(setGifts)
+      .catch(console.error)
+    // Fetch rank (if endpoint exists)
+    fetch(`/api/user/rank?telegram_id=${user.telegram_id}`)
+      .then(r => r.json())
+      .then(data => setRank(data.rank))
+      .catch(() => setRank(null))
+  }, [user])
+
+  const fullName = user
+    ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+    : 'Гость'
+
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <img src={profileImage} alt="Avatar" className="avatar" />
-        <div className="profile-info">
-          <div className="name">Aldoriusis K.</div>
-          <div className="rank">Вы на #542 месте</div>
+        {user?.photo_url ? (
+          <img src={user.photo_url} alt="Avatar" className="profile-header__avatar" />
+        ) : (
+          <div className="profile-header__avatar placeholder">{fullName[0]}</div>
+        )}
+        <div className="profile-header__text">
+          <h2 className="profile-header__name">{fullName}</h2>
+          {rank && (
+            <p className="profile-header__rank">Вы на #{rank} месте</p>
+          )}
         </div>
       </div>
 
-      <div className="gifts-list">
-        {userGifts.map(gift => (
-          <div key={gift.id} className="gift-item">
-            <img src={gift.img} alt={gift.id} className="gift-image" />
-            <div className="gift-details">
-  <div className="gift-id">{gift.id}</div>
-  <div className="gift-stars">
-    <img src={starIcon} alt="star" className="star-icon" />
-    <span>{gift.stars}</span>
-  </div>
-</div>
-            <div className="gift-actions">
-              <button className="btn claim">Получить</button>
-              <button className="btn sell">Продать</button>
+      <div className="profile-gifts">
+        {gifts.map(g => (
+          <div key={g.gift_id} className="gift-card">
+            <img src={g.image_url} alt={g.name} className="gift-card__img" />
+            <div className="gift-card__info">
+              <div className="gift-card__title">#{g.gift_id}</div>
+              <div className="gift-card__stars">⭐ {g.stars}</div>
+            </div>
+            <div className="gift-card__actions">
+              <button className="btn btn--small">Получить</button>
+              <button className="btn btn--small btn--outline">Продать</button>
             </div>
           </div>
         ))}
       </div>
     </div>
-  );
-};
-
-export default ProfilePage;
+  )
+}

@@ -1,9 +1,18 @@
 import fetch from "node-fetch";
+
+// Telegram Bot Token from environment
 const BOT_TOKEN = process.env.BOT_TOKEN!;
+export { BOT_TOKEN };
+
+// Helper to build Bot API URL
 const API = (method: string) => `https://api.telegram.org/bot${BOT_TOKEN}/${method}`;
 
-export async function sendInvoice(chat_id: number, amount: number, payload: string) {
-  // Telegram expects prices in the smallest currency unit; for XTR we treat 1 XTR = 100 "cents"
+// Send invoice to user
+export async function sendInvoice(
+  chat_id: number,
+  amount: number,
+  payload: string
+) {
   const prices = [{ label: `${amount} XTR`, amount: amount * 100 }];
   const body = {
     chat_id,
@@ -11,9 +20,10 @@ export async function sendInvoice(chat_id: number, amount: number, payload: stri
     description: `Вы пополняете баланс на ${amount} XTR`,
     payload,
     provider_token: process.env.PROVIDER_TOKEN,
-    currency: "RUB",   // или любая другая валюта
+    currency: "RUB",
     prices,
   };
+
   const res = await fetch(API("sendInvoice"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },

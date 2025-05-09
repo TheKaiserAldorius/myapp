@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Пополнение баланса</title>
+  <link rel="stylesheet" href="/topup.scss">
+</head>
+<body>
+  <div class="topup-container">
+    <h1 class="topup-title">Пополнение звёзд</h1>
+    <div class="topup-field">
+      <label for="amountInput">Сумма (XTR)</label>
+      <input id="amountInput" type="number" value="100" min="1" />
+    </div>
+    <button id="topUpBtn" class="topup-button">Купить</button>
+  </div>
+
+  <div id="notification" class="notification hidden">
+    <div class="notification__icon">🔔</div>
+    <div class="notification__message" id="notif-text">
+      Ожидаем оплаты...
+    </div>
+    <button id="notif-close" class="notification__close">&times;</button>
+  </div>
+
+  <script src="./topup.js"></script>
+</body>
+</html>

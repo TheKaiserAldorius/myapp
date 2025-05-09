@@ -1,0 +1,53 @@
+/* src/components/CasesPage.scss */
+
+/* Основной контейнер страницы кейсов */
+.cases-page {
+  padding: 16px 16px 76px; /* Отступы сверху, по бокам и снизу */
+  background-color: #1A1F26; /* Тёмный фон */
+  min-height: 100vh; /* Минимальная высота страницы */
+  box-sizing: border-box; /* Включаем отступы в расчёт размеров */
+}
+
+/* Сетка для отображения кейсов */
+.cases-grid {
+  display: grid; /* Используем CSS Grid */
+  grid-template-columns: repeat(2, 1fr); /* Две колонки */
+  gap: 16px; /* Расстояние между элементами */
+}
+
+/* Карточка кейса */
+.case-card {
+  position: relative; /* Для позиционирования вложенных элементов */
+  height: 220px; /* Высота карточки */
+  border-radius: 8px; /* Скруглённые углы */
+  overflow: hidden; /* Скрываем содержимое за границами */
+  background-size: cover; /* Изображение заполняет карточку */
+  background-position: center; /* Центрируем изображение */
+  background-repeat: no-repeat; /* Изображение не повторяется */
+  display: flex; /* Flexbox для выравнивания содержимого */
+  flex-direction: column; /* Содержимое располагается вертикально */
+  justify-content: flex-end; /* Содержимое прижимается к низу */
+}
+
+/* Нижняя часть карточки */
+.case-footer {
+  display: flex; /* Flexbox для выравнивания содержимого */
+  align-items: center; /* Выравнивание по вертикали */
+  justify-content: center; /* Центрирование содержимого */
+  padding: 8px; /* Внутренние отступы */
+  background: rgba(0, 0, 0, 0.6); /* Полупрозрачный чёрный фон */
+
+  /* Иконка звезды */
+  .case-star-icon {
+    width: 16px; /* Ширина иконки */
+    height: 16px; /* Высота иконки */
+    margin-right: 4px; /* Отступ справа */
+  }
+
+  /* Цена кейса */
+  .case-price {
+    font-size: 14px; /* Размер шрифта */
+    font-weight: 600; /* Толщина шрифта */
+    color: #FFFFFF; /* Белый цвет текста */
+  }
+}

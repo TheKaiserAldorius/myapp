@@ -1,0 +1,98 @@
+{% extends 'admin/master.html' %}
+
+{% block head_css %}
+  {{ super() }}
+  <style>
+    body {
+      background-color: #1A1F26;
+      color: #FFFFFF;
+      font-family: 'SF Pro Text', sans-serif;
+    }
+    .link-card {
+      transition: transform .2s;
+    }
+    .link-card:hover {
+      transform: translateY(-4px);
+    }
+    #statsChartContainer {
+      background: #2B313A;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+  </style>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block body %}
+  <div class="container-fluid py-4">
+    <h2 style="text-align: center;">👋 Сап админ! Удачной работы!</h2>
+    <div class="row g-4 mt-3">
+      <div class="col-md-4">
+        <a href="{{ url_for('user.index_view') }}"
+           class="card link-card text-white bg-primary text-center text-decoration-none p-3">
+          <div class="card-title">Пользователи</div>
+          <div class="card-value display-4">{{ users }}</div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="{{ url_for('payment.index_view') }}"
+           class="card link-card text-white bg-success text-center text-decoration-none p-3">
+          <div class="card-title">Платежей</div>
+          <div class="card-value display-4">{{ payments }}</div>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a href="{{ url_for('case.index_view') }}"
+           class="card link-card text-white bg-info text-center text-decoration-none p-3">
+          <div class="card-title">Кейсов</div>
+          <div class="card-value display-4">{{ cases }}</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Контейнер для графика -->
+    <div id="statsChartContainer">
+      <h5>Новые активности пользователей (последние 7 дней)</h5>
+      <canvas id="statsChart" height="100"></canvas>
+    </div>
+
+    <footer class="text-center mt-5">
+      <small>© {{ current_year }} CasinMain</small>
+    </footer>
+  </div>
+
+  <script>
+    // По загрузке страницы запрашиваем данные и рисуем график
+    fetch('/api/admin/stats_history')
+      .then(res => res.json())
+      .then(data => {
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Активные пользователи',
+              data: data.counts,
+              fill: true,
+              borderColor: '#69AFFF',
+              backgroundColor: 'rgba(105, 175, 255, 0.2)',
+              tension: 0.4
+            }]
+          },
+          options: {
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#DDD' } },
+              y: { grid: { color: '#444' }, ticks: { color: '#DDD' } }
+            },
+            plugins: {
+              legend: { labels: { color: '#FFF' } }
+            }
+          }
+        });
+      })
+      .catch(console.error);
+  </script>
+{% endblock %}

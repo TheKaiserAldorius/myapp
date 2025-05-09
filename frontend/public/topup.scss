@@ -1,0 +1,85 @@
+/* Сброс */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, sans-serif;
+  background: #20272F;
+  color: #fff;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Контейнер пополнения */
+.topup-container {
+  background: #2a8bf2;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 320px;
+  text-align: center;
+}
+.topup-title {
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+.topup-field {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.topup-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.topup-field input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+}
+.topup-button {
+  width: 100%;
+  padding: 10px;
+  background: #fff;
+  color: #2a8bf2;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Модальное уведомление */
+.notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+}
+.notification.hidden {
+  display: none;
+}
+.notification__icon {
+  font-size: 24px;
+}
+.notification__message {
+  flex: 1;
+  font-size: 16px;
+}
+.notification__close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
