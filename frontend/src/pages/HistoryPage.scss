@@ -1,11 +1,25 @@
 .history-page {
-  /* Уменьшили верхний отступ, чтобы контент был прямо под хедером */
   padding: 8px 16px 76px;
   background-color: #20272F;
   min-height: 100vh;
   box-sizing: border-box;
   color: #fff;
   font-family: 'SF Pro Text', sans-serif;
+  user-select: none;
+  -webkit-user-drag: none;
+
+  // Правильный способ скрытия скроллбара:
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;       // smooth scroll for iOS
+  scrollbar-width: none;                   // Firefox
+  -ms-overflow-style: none;                // IE/Edge
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+    background: transparent;
+  }
 
   .history-header {
     display: flex;
@@ -18,7 +32,7 @@
     .history-icon-circle {
       width: 40px;
       height: 40px;
-      background: #20272F;
+      background: #20272f2a;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -26,8 +40,8 @@
       margin-right: 12px;
 
       img {
-        width: 24px;
-        height: 24px;
+        width: 44px;
+        height: 44px;
       }
     }
 
@@ -38,8 +52,8 @@
         color: #FFFFFF;
       }
       .history-subtitle {
-        font-size: 12px;
-        color: #A5A5A5;
+        font-size: 14px;
+        color: #AED5FF;
         margin-top: 2px;
       }
     }
@@ -73,6 +87,7 @@
           font-weight: 600;
           color: #FFFFFF;
         }
+
         .item-meta {
           display: flex;
           align-items: center;
@@ -80,8 +95,6 @@
           color: #A5A5A5;
           margin-top: 4px;
           gap: 8px;
-
-          .item-id { }
 
           .item-stars {
             display: flex;
@@ -97,7 +110,13 @@
             .minus { color: #FF5959; }
           }
 
-          .item-date { }
+          .item-date,
+          .item-id {
+            font-size: 12px;
+            color: #AED5FF;
+            margin-left: auto;
+            white-space: nowrap;
+          }
         }
       }
     }

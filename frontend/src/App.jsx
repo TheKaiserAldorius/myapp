@@ -1,3 +1,5 @@
+// frontend/src/App.jsx
+
 import React, { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useUserStore } from './store/useUserStore'
@@ -13,24 +15,37 @@ import StarTopUp from './pages/StarTopUp'
 
 export default function App() {
   const loc = useLocation()
-  const { user, balance, setUser, setBalance, isLoading, setLoading, error, setError } = useUserStore()
+  const {
+    user,
+    balance,
+    telegramInitData,
+    setTelegramInitData,
+    setUser,
+    setBalance,
+    isLoading,
+    setLoading,
+    error,
+    setError
+  } = useUserStore()
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp
     if (!tg) return
 
+    // сохраняем initDataUnsafe, чтобы OnlineCasesBlock мог взять user.id
+    const initUnsafe = tg.initDataUnsafe || {}
+    setTelegramInitData(initUnsafe)
+
     tg.expand()
     tg.enableClosingConfirmation()
     tg.ready()
 
-    const initUnsafe = tg.initDataUnsafe || {}
     if (!initUnsafe.user?.id) {
       tg.showAlert('Откройте приложение в Telegram')
       setLoading(false)
       return
     }
 
-    // Логин через бэкенд без базового URL
     fetch(`/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -51,12 +66,11 @@ export default function App() {
       .then(b => setBalance(b.balance_xtr))
       .catch(e => {
         console.error('Auth/login error:', e)
-        const msg = e.message || 'Ошибка авторизации'
-        window.Telegram.WebApp.showAlert(msg)
-        setError(msg)
+        window.Telegram.WebApp.showAlert(e.message || 'Ошибка авторизации')
+        setError(e.message)
       })
       .finally(() => setLoading(false))
-  }, [setUser, setBalance, setLoading, setError])
+  }, [setTelegramInitData, setUser, setBalance, setLoading, setError])
 
   if (error) {
     return (
@@ -76,7 +90,7 @@ export default function App() {
       <div className="main-content">
         {isLoading ? (
           <div className="loading-overlay">
-            <div className="spinner"></div>
+            <div className="spinner" />
           </div>
         ) : (
           <Routes>

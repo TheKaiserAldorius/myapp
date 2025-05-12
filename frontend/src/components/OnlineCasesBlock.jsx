@@ -1,5 +1,3 @@
-// frontend/src/components/OnlineCasesBlock.jsx
-
 import React, { useEffect, useState } from 'react';
 import './OnlineCasesBlock.scss';
 import cakeImage     from '../assets/iconitems/cake.png';
@@ -21,50 +19,35 @@ export default function OnlineCasesBlock() {
   const { telegramInitData } = useUserStore();
 
   useEffect(() => {
-    // 1) Определяем tgId
-    const testId = import.meta.env.VITE_TEST_TG_ID;
-    const rawId  = telegramInitData?.user?.id || testId;
+    const rawId  = telegramInitData?.user?.id;
     const tgId   = rawId ? parseInt(rawId, 10) : null;
+    if (!tgId) return;
 
-    // 2) Базовый URL API (из .env.production или Docker ENV)
     const API = import.meta.env.VITE_API_URL || '';
 
-    // 3) Heartbeat (если нужно)
-    if (tgId) {
-      fetch(`${API}/api/heartbeat?telegram_id=${tgId}`)
-        .catch(() => { /* можно показать ошибку пользователю */ });
-    }
+    // обновляем last_active
+    fetch(`${API}/api/heartbeat?telegram_id=${tgId}`).catch(() => {});
 
-    // 4) SSE-подписка
+    // подписка SSE
     const es = new EventSource(`${API}/api/online/stream`);
-    es.onmessage = e => {
+    es.onmessage = (e) => {
       try {
         const { online: count } = JSON.parse(e.data);
         setOnline(count);
-      } catch {
-        // игнорируем парс-ошибки
-      }
+      } catch {}
     };
-    es.onerror = () => {
-      es.close();
-    };
-
-    return () => {
-      es.close();
-    };
+    es.onerror = () => es.close();
+    return () => es.close();
   }, [telegramInitData]);
 
   return (
     <div className="online-cases-block">
       <div className="online-block">
         <div className="online-number">
-          {online !== null
-            ? <span style={{ color: 'lime' }}>{online}</span>
-            : '171'}
+          {online !== null ? <span style={{ color: 'lime' }}>{online}</span> : '—'}
         </div>
         <div className="online-text">Онлайн</div>
       </div>
-
       <div className="cases-container">
         {caseImages.map((img, idx) => (
           <div className="case-wrapper" key={idx}>

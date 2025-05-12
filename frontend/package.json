@@ -10,7 +10,14 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
-    "zustand": "^4.3.5"
+    "zustand": "^4.3.5",
+    "axios": "^1.4.0",
+
+    "@telegram-apps/sdk-react": "^3.2.4",
+    "@telegram-apps/telegram-ui": "^2.1.8",
+
+    "@lottiefiles/react-lottie-player": "^3.6.0",
+    "lottie-web": "^5.12.2"
   },
   "devDependencies": {
     "vite": "^4.5.14",

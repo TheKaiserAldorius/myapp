@@ -1,4 +1,4 @@
-BOT_TOKEN = "7946929640:AAHyvOtncaDyLhzqdqAoFe5ptQR7_ptkOXo"
+BOT_TOKEN = "7937546539:AAGrxWPgFQLZB4z17VKv_5SRJCrhXVlaOr8"
 PROVIDER_TOKEN = ""
-DATABASE_URI=postgres://postgres:password@db:5432/casin
+DATABASE_URI=
 WEBHOOK_PATH = "/webhook"

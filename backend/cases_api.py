@@ -3,7 +3,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from flask import Flask, jsonify
 
-db_url = os.getenv("DATABASE_URL")  # postgres://.../casin
+db_url = os.getenv("DATABASE_URL") 
 conn = psycopg2.connect(db_url, cursor_factory=RealDictCursor)
 app = Flask(name)
 

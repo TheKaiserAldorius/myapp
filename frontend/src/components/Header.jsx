@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUserStore } from '../store/useUserStore'
+import starIcon from '../assets/buttonsicons/StarTg.png'
 import './Header.scss'
 
 export default function Header() {
@@ -24,7 +25,13 @@ export default function Header() {
       </div>
       <div className="header__actions">
         <div className="header__balance">
-          ⭐ {balance}
+          <img
+            src={starIcon}
+            alt="Star"
+            className="header__star-icon"
+            style={{ width: '14px', height: '14px', marginRight: '5px', verticalAlign: 'middle' }}
+          />
+          {balance}
         </div>
         <button
           className="header__topup-btn"

@@ -2,83 +2,103 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;        // Height reduced by ~50%
+  padding: 8px 10px;        
   background-color: #20272F;
   color: #FFFFFF;
   border-bottom: 1px solid #4C5B6C;
+  user-select: none; 
+  -webkit-user-drag: none;
 
   &__user {
     display: flex;
     align-items: center;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &__avatar {
-    width: 28px;             // reduced from 46px
-    height: 28px;            // reduced from 46px
+    width: 30px;             
+    height: 30px;            
     border-radius: 50%;
     object-fit: cover;
     background-color: #333348;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;         // adjusted for smaller avatar
+    font-size: 12px;
     font-weight: 600;
     color: #FFFFFF;
     margin-right: 8px;
+    user-select: none;
+    -webkit-user-drag: none;
 
     &.placeholder {
       background-color: #27333F;
+      -webkit-user-drag: none;
     }
   }
 
   &__info {
     display: flex;
     flex-direction: column;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &__name {
-    font-size: 14px;         // slightly smaller text
+    font-size: 16px;       
     font-weight: 600;
     line-height: 18px;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &__sub {
-    font-size: 10px;         // slightly smaller
-    color: #A3A3C2;
+    font-size: 14px;        
+    color: #ffffff;
     margin-top: 2px;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &__actions {
     display: flex;
     align-items: center;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &__balance {
     background-color: #27333F;
-    padding: 4px 8px;        // half padding
+    padding: 4px 8px;       
     border-radius: 12px;
     font-weight: 600;
-    font-size: 12px;         // half font-size
+    font-size: 12px;         
     margin-right: 8px;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   &__topup-btn {
     background-color: #4F66FF;
     border: none;
     border-radius: 50%;
-    width: 20px;             // half size
-    height: 20px;            // half size
+    width: 20px;             
+    height: 20px;           
     color: #FFFFFF;
-    font-size: 14px;         // adjusted for smaller
+    font-size: 14px;        
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: background-color 0.2s;
+    user-select: auto;
+    -webkit-user-drag: none;
 
     &:hover {
       background-color: #657EFF;
+      -webkit-user-drag: none;
     }
   }
 }

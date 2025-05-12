@@ -5,7 +5,7 @@ import starIcon from '../assets/buttonsicons/StarTg.png';
 import plusIcon from '../assets/buttonsicons/plusbut.png';
 import './BalanceBadge.scss';
 
-const BACKEND = 'http://82.202.129.176:4000';
+const BACKEND = 'http://45.158.169.25:4000';
 // TODO: заменить на telegramInitData.user.id после настройки Telegram.WebApp.initDataUnsafe
 const TEST_TG_ID = 671938551;
 // Фиксированная сумма пополнения (можно вынести в пропс или стейт)
