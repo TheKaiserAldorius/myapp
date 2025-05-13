@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css?family=Arvo');
+
+.lottieWrapper {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.lottieAnimation {
+  width: 100px;
+  margin: 0 auto 20px;
+}
+
+.HeadText {
+  font-family: 'Arvo', sans-serif;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.loadingText {
+  text-align: center;
+  margin: 40px 0;
+  color: var(--tg-theme-text-color);
+}
+
+.casesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 24px;
+  padding: 0 24px 80px;
+}
+
+.caseCard {
+  background: var(--tg-theme-secondary-bg-color);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.5s ease both;
+  cursor: pointer;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.caseImage {
+  width: 100%;
+  height: 100px;
+  object-fit: contain;
+}
+
+.caseTitle {
+  font-family: 'Arvo', sans-serif;
+  font-size: 15px;
+  margin: 6px 0 10px;
+  color: var(--tg-theme-text-color);
+}
+
+.caseStars {
+  display: flex;
+  align-items: center;
+  background: rgba(240,180,0,0.16);
+  padding: 6px 10px;
+  border-radius: 15px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #ba7000;
+  transition: transform 0.2s;
+}
+
+.caseStars:hover {
+  transform: scale(1.05);
+}
+
+.caseStars img {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+}
+
+.disabledCard {
+  pointer-events: none;
+  opacity: 0.5;
+  filter: grayscale(80%);
+}
+
+.newTapeContainer {
+  position: absolute;
+  top: -10px; right: -20px;
+  width: 60px; height: 60px;
+  z-index: 1;
+}
+
+.newTape {
+  width: 100%; height: 100%;
+  transform: rotate(15deg);
+}
+
+.newTapeText {
+  position: absolute;
+  top: 42%; left: 62%;
+  transform: translate(-50%,-50%) rotate(61deg);
+  color: white; font-weight: bold; font-size: 12px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}

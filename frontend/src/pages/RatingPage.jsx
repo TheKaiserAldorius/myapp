@@ -9,6 +9,9 @@ import Frog3 from '../assets/frogs/Frog3.png'
 import Frog4 from '../assets/frogs/Frog4.png'
 import Frog5 from '../assets/frogs/Frog5.png'
 
+import defaultAvatar from '../assets/iconitems/user_img.webp'
+
+
 import { useLeaderboard } from '../hooks/useLeaderboard'
 import { useUserRank }    from '../hooks/useUserRank'
 import { useUserStore }   from '../store/useUserStore'

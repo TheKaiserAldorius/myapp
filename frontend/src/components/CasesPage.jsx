@@ -1,53 +1,90 @@
-// src/components/CasesPage.jsx
+  import React, { useState, useEffect } from 'react';
+  import { Button, Headline } from '@telegram-apps/telegram-ui';
+  import { Page } from '@/components/Page';
+  import { Player } from '@lottiefiles/react-lottie-player';
+  import pageAnimation from '../assets/prize/!!!!!dizzy.json';
+  import { useCases } from '../hooks/useCases.js';
+  import { fetchCaseStatus } from '../config/api.js';
+  import YourRouletteComponent from './YourRouletteComponent';
+  import { miniApp, useSignal, useLaunchParams } from '@telegram-apps/sdk-react';
+  import StarIcon from '../assets/prize/StarsIcon.webp';
+  import NewTape from '../assets/newTape/newtape.webp';
+  import styles from './CasesPage.module.css';
 
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './CasesPage.scss'; // Убедитесь, что файл CasesPage.scss существует
-import starIcon from '../assets/buttonsicons/StarTg.png';
-import { fetchCases } from '../api/game'; // Импортируем функцию fetchCases
+  export default function CasesPage() {
+    const { cases, loading } = useCases();
+    const [statuses, setStatuses] = useState({});
+    const [selected, setSelected] = useState(null);
+    const { language } = useLanguage();
+    const isDark = useSignal(miniApp.isDark);
+    const { platform } = useLaunchParams();
 
-export default function CasesPage() {
-  const [casesList, setCasesList] = useState([]); // Список кейсов
-  const [error, setError] = useState(null); // Ошибка загрузки
-  const navigate = useNavigate(); // Для навигации между страницами
+    useEffect(() => {
+      cases.forEach(c =>
+        fetchCaseStatus(c.id)
+          .then(disabled => setStatuses(s => ({ ...s, [c.id]: disabled })))
+          .catch(() => setStatuses(s => ({ ...s, [c.id]: false })))
+      );
+    }, [cases]);
 
-  useEffect(() => {
-    const loadCases = async () => {
-      try {
-        const data = await fetchCases(); // Получаем кейсы через API
-        setCasesList(data); // Сохраняем кейсы в состояние
-      } catch (err) {
-        console.error(err); // Логируем ошибку
-        setError(err.message); // Сохраняем сообщение об ошибке
-      }
-    };
+    if (selected !== null) {
+      return (
+        <YourRouletteComponent
+          caseId={selected}
+          onClose={() => setSelected(null)}
+        />
+      );
+    }
 
-    loadCases(); // Загружаем кейсы при монтировании компонента
-  }, []);
+    return (
+      <Page back={false}>
+        <div className={styles.lottieWrapper}>
+          <Player
+            ref={ref => { /* noop */ }}
+            autoplay loop
+            className={styles.lottieAnimation}
+            src={pageAnimation}
+          />
+        </div>
+        <Headline className={styles.HeadText}>
+          {language === 'ru' ? 'Какой кейс вы хотите открыть?' : 'Which case will you open?'}
+        </Headline>
 
-  // Если произошла ошибка, отображаем сообщение
-  if (error) {
-    return <div className="error-message">Ошибка загрузки кейсов: {error}</div>;
-  }
-
-  // Отображаем список кейсов
-  return (
-    <div className="cases-page">
-      <div className="cases-grid">
-        {casesList.map(c => (
-          <div
-            key={c.id}
-            className="case-card"
-            style={{ backgroundImage: `url(${c.image_url})` }} // Фон карточки - изображение кейса
-            onClick={() => navigate(`/game/${c.id}`)} // Переход на страницу игры
-          >
-            <div className="case-footer">
-              <img src={starIcon} alt="звезда" className="case-star-icon" />
-              <span className="case-price">{c.price}</span> {/* Цена кейса */}
-            </div>
+        {loading ? (
+          <div className={styles.loadingText}>
+            {language === 'ru' ? 'Загрузка кейсов…' : 'Loading cases…'}
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+        ) : (
+          <div className={styles.casesGrid}>
+            {cases.map(c => {
+              const disabled = statuses[c.id];
+              return (
+                <div
+                  key={c.id}
+                  className={`${styles.caseCard} ${disabled ? styles.disabledCard : ''}`}
+                  onClick={() => !disabled && setSelected(c.id)}
+                >
+                  <div className={styles.cardContent}>
+                    {c.is_new && (
+                      <div className={styles.newTapeContainer}>
+                        <img src={NewTape} alt="NEW" className={styles.newTape} />
+                        <span className={styles.newTapeText}>
+                          {language === 'ru' ? 'НОВЫЙ' : 'NEW'}
+                        </span>
+                      </div>
+                    )}
+                    <img src={c.image_url} alt={c.name} className={styles.caseImage} />
+                    <h3 className={styles.caseTitle}>{c.name}</h3>
+                    <div className={styles.caseStars}>
+                      <img src={StarIcon} alt="star" />
+                      {c.price}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Page>
+    );
+  }

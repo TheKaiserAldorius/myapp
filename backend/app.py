@@ -4,12 +4,12 @@ import time
 from datetime import datetime, timedelta
 
 import requests
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify, redirect, abort
 from flask_cors import CORS
 from dotenv import load_dotenv
-from sqlalchemy import func, text
+from sqlalchemy import func, union_all, text
 
-from models import db, User, Case, Payment
+from models import db, User, Case, Payment, HistoryGame
 
 # --- ИНИЦИАЛИЗАЦИЯ ---
 load_dotenv()
@@ -27,11 +27,15 @@ BOT_TOKEN      = os.getenv("BOT_TOKEN", "")
 PROVIDER_TOKEN = os.getenv("PROVIDER_TOKEN", "")
 WEB_APP_URL    = os.getenv("WEB_APP_URL", "")
 
-# --- МАРШРУТЫ ---
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
 @app.route('/')
 def root():
     return redirect(WEB_APP_URL)
 
+# --- AUTH ---
 @app.route("/api/auth/login", methods=["POST"])
 def auth_login():
     payload = request.get_json(force=True) or {}
@@ -53,17 +57,19 @@ def auth_login():
         "telegram_id":  chat_id,
         "first_name":   tg_user.get("first_name", ""),
         "last_name":    tg_user.get("last_name", ""),
-        "username":     user.username,
+        "username":     user.username or "",
         "photo_url":    tg_user.get("photo_url", ""),
         "balance_xtr":  float(user.balance_xtr or 0),
     })
 
+# --- BALANCE ---
 @app.route("/api/balance", methods=["GET"])
 def get_balance():
     chat_id = request.args.get("telegram_id", type=int)
     user = User.query.filter_by(chat_id=chat_id).first()
     return jsonify({"balance_xtr": float(user.balance_xtr or 0) if user else 0})
 
+# --- CASES ---
 @app.route("/api/cases", methods=["GET"])
 def get_cases():
     cases = Case.query.order_by(Case.id).all()
@@ -72,6 +78,7 @@ def get_cases():
         for c in cases
     ])
 
+# --- INVOICES ---
 @app.route("/api/create_invoice", methods=["POST"])
 def create_invoice():
     data    = request.get_json(force=True) or {}
@@ -119,45 +126,58 @@ def webhook():
     msg = upd.get("message", {})
     pay = msg.get("successful_payment")
     if pay:
-        payload = pay.get("invoice_payload")
-        p = Payment.query.filter_by(payload=payload).first()
+        p = Payment.query.filter_by(payload=pay["invoice_payload"]).first()
         if p and p.status == "pending":
             p.status = "paid"
             u = User.query.get(p.user_id)
-            u.stars_count += pay.get("total_amount", 0) // 100
-            u.balance_xtr  = (u.balance_xtr or 0) + (pay.get("total_amount", 0) / 100)
+            u.stars_count += pay["total_amount"] // 100
+            u.balance_xtr = (u.balance_xtr or 0) + (pay["total_amount"] / 100)
             db.session.commit()
     return jsonify({"ok": True})
 
+# --- LEADERBOARD ---
 @app.route("/api/leaderboard", methods=["GET"])
 def get_leaderboard():
     period = request.args.get("period")
-    # недельный рейтинг
     if period == "weekly":
         week_ago = datetime.utcnow() - timedelta(days=7)
-        subq = db.session.query(
-            Payment.user_id,
-            func.sum(Payment.amount).label("total_earned")
-        ).filter(Payment.created_at >= week_ago) \
-         .group_by(Payment.user_id) \
-         .subquery()
 
+        # пополнения за неделю
+        deposit_q = db.session.query(
+            Payment.user_id.label("user_id"),
+            Payment.amount.label("value")
+        ).filter(
+            Payment.status == "paid",
+            Payment.created_at >= week_ago
+        )
+
+        # выигрыши за неделю
+        game_q = db.session.query(
+            HistoryGame.user_id.label("user_id"),
+            HistoryGame.price.label("value")
+        ).filter(
+            HistoryGame.date >= week_ago
+        )
+
+        ev = union_all(deposit_q, game_q).alias("ev")
         rows = db.session.query(
-            User.id_user, User.username, subq.c.total_earned
-        ).join(subq, subq.c.user_id == User.id_user) \
-         .order_by(subq.c.total_earned.desc()) \
+            ev.c.user_id,
+            func.sum(ev.c.value).label("total_earned")
+        ).group_by(ev.c.user_id) \
+         .order_by(func.sum(ev.c.value).desc()) \
          .limit(100) \
          .all()
 
         data = [
-            {"id": u.id_user, "username": u.username or "", "total_earned": int(total)}
-            for u, _, total in rows
+            {
+                "id":            uid,
+                "username":      User.query.get(uid).username or "",
+                "total_earned":  int(total)
+            }
+            for uid, total in rows
         ]
     else:
-        # общий рейтинг
-        users = User.query.order_by(User.stars_count.desc()) \
-                         .limit(100) \
-                         .all()
+        users = User.query.order_by(User.stars_count.desc()).limit(100).all()
         data = [
             {"id": u.id_user, "username": u.username or "", "total_earned": u.stars_count}
             for u in users
@@ -165,6 +185,7 @@ def get_leaderboard():
 
     return jsonify({"success": True, "data": data})
 
+# --- USER RANK ---
 @app.route("/api/user/<int:user_id>/rank", methods=["GET"])
 def get_user_rank(user_id):
     users = User.query.order_by(User.stars_count.desc()).all()
@@ -173,63 +194,80 @@ def get_user_rank(user_id):
             return jsonify({"rank": idx})
     return jsonify({"rank": None}), 404
 
+# --- HISTORY ---
 @app.route("/api/history", methods=["GET"])
 def get_history():
-    chat_id = request.args.get("telegram_id", type=int)
-    user = User.query.filter_by(chat_id=chat_id).first()
+    tg_id = request.args.get("telegram_id", type=int)
+    user = User.query.filter_by(chat_id=tg_id).first()
     if not user:
         return jsonify({"success": False, "data": [], "error": "user not found"}), 404
 
-    uid = user.id_user
+    uid     = user.id_user
     history = []
 
-    # 1) Депозиты и продажи
-    deposit_sql = text("""
-      SELECT id_deposit AS id,
-             price        AS amount,
-             date,
-             source
-      FROM history_deposit
-      WHERE user_id = :uid
-    """)
-    for row in db.session.execute(deposit_sql, {"uid": uid}):
-        kind = "deposit" if row.source == "donate" else "sale"
-        desc = "Пополнение XTR" if row.source == "donate" else "Продажа подарка"
+    # 1) Пополнения (все статусы)
+    for p in Payment.query.filter_by(user_id=uid).order_by(Payment.created_at.desc()).all():
         history.append({
-            "id":          str(row.id),
-            "type":        kind,
-            "description": desc,
+            "id":          f"dep_{p.id}",
+            "type":        "deposit",
+            "description": "Пополнение XTR",
+            "stars":       p.amount,
+            "date":        p.created_at.isoformat()
+        })
+
+    # 2) Продажи подарков
+    sell_sql = text("""
+      SELECT id_deposit AS id, price AS amount, date
+      FROM history_deposit
+      WHERE user_id = :uid AND source = 'sell'
+      ORDER BY date DESC
+    """)
+    for row in db.session.execute(sell_sql, {"uid": uid}):
+        history.append({
+            "id":          f"sell_{row.id}",
+            "type":        "sale",
+            "description": "Продажа подарка",
             "stars":       row.amount,
             "date":        row.date.isoformat()
         })
 
-    # 2) Выигрыши в играх
-    game_sql = text("""
-      SELECT h.id_game AS id,
-             h.price    AS amount,
-             h.date
-      FROM history_game h
-      WHERE h.user_id = :uid
-    """)
-    for row in db.session.execute(game_sql, {"uid": uid}):
+    # 3) Полученные подарки
+    for g in HistoryGame.query.filter_by(user_id=uid).order_by(HistoryGame.date.desc()).all():
         history.append({
-            "id":          str(row.id),
+            "id":          f"game_{g.id_game}",
             "type":        "gift_received",
             "description": "Подарок получен",
-            "stars":       row.amount,
-            "date":        row.date.isoformat()
+            "stars":       g.price,
+            "date":        g.date.isoformat()
         })
 
-    # Сортировка по дате, от новых к старым
-    history.sort(key=lambda x: x["date"], reverse=True)
+    # 4) Обмены подарков (если есть created_at в gift_user_have)
+    exch_sql = text("""
+      SELECT id_gift_number AS id, created_at AS date
+      FROM gift_user_have
+      WHERE user_id = :uid AND received = true
+      ORDER BY created_at DESC
+    """)
+    try:
+        for row in db.session.execute(exch_sql, {"uid": uid}):
+            history.append({
+                "id":          f"exch_{row.id}",
+                "type":        "gift_exchanged",
+                "description": "Подарок обменян",
+                "stars":       0,
+                "date":        row.date.isoformat()
+            })
+    except Exception:
+        pass
 
+    history.sort(key=lambda x: x["date"], reverse=True)
     return jsonify({"success": True, "data": history})
 
-# --- ENDPOINT ONLINE COUNT ---
+# --- HEARTBEAT & ONLINE COUNT ---
 @app.route("/api/heartbeat", methods=["GET"])
 def heartbeat():
-    chat_id = request.args.get("telegram_id", type=int)
-    user = User.query.filter_by(chat_id=chat_id).first()
+    tg_id = request.args.get("telegram_id", type=int)
+    user = User.query.filter_by(chat_id=tg_id).first()
     if user:
         user.last_active = datetime.utcnow()
         db.session.commit()
@@ -239,13 +277,12 @@ def heartbeat():
 def online_stream():
     def event_stream():
         while True:
-            now = datetime.utcnow()
-            minutes_ago = now - timedelta(minutes=5)
-            count = User.query.filter(User.last_active >= minutes_ago).count()
-            yield f"data: {{\"online\": {count}}}\n\n"
+            cut = datetime.utcnow() - timedelta(minutes=5)
+            cnt = User.query.filter(User.last_active >= cut).count()
+            yield f"data: {{\"online\": {cnt}}}\n\n"
             time.sleep(10)
     return app.response_class(event_stream(), mimetype='text/event-stream')
 
-# --- ЗАПУСК СЕРВЕРА ---
+# --- RUN SERVER ---
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=4000, debug=True)

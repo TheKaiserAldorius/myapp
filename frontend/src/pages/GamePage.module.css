@@ -1,0 +1,98 @@
+.game-page {
+  padding: 16px;
+  background: #1A1F26;
+  min-height: 100vh;
+  box-sizing: border-box;
+  color: #fff;
+  font-family: Roboto, sans-serif;
+}
+
+.carousel {
+  overflow: hidden;
+  margin: 16px 0;
+}
+
+.carousel-track {
+  display: flex;
+  will-change: transform;
+}
+
+.carousel-item {
+  width: 80px; height: 80px;
+  margin-right: 12px;
+  background: #2B313A;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.carousel-item.won {
+  outline: 2px solid #69AFFF;
+}
+
+.item-img { width: 48px; height: 48px; }
+
+.item-price {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.item-price .star { width: 12px; height: 12px; margin-right: 4px; }
+
+.play-button {
+  width: 100%;
+  background: #2088FF;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 16px 0;
+}
+
+.star-inline { width: 16px; height: 16px; margin-left: 8px; }
+
+.chance-block {
+  margin-top: 16px;
+}
+
+.chance-block h3 {
+  font-size: 18px; margin-bottom: 8px;
+}
+
+.chance-item {
+  display: flex;
+  align-items: center;
+  background: #2B313A;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.chance-item .icon {
+  width: 32px; height: 32px;
+  margin-right: 12px;
+}
+
+.chance-item .info .name {
+  font-size: 14px; margin-bottom: 4px;
+}
+
+.chance-item .price {
+  display: flex; align-items: center;
+  font-size: 12px; color: #A5A5A5;
+}
+
+.chance-item .price .star {
+  width: 12px; height: 12px; margin-right: 4px;
+}

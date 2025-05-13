@@ -36,3 +36,10 @@ class Case(db.Model):
     name = db.Column(db.String)
     price = db.Column(db.Integer)
     image_url = db.Column(db.String)
+    
+class HistoryGame(db.Model):
+    __tablename__ = 'history_game'
+    id_game = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id_user'), nullable=False)
+    price   = db.Column(db.Integer, nullable=False)
+    date    = db.Column(db.DateTime, default=datetime.utcnow)
