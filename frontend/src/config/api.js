@@ -1,40 +1,22 @@
-import axios from 'axios';
-
+import axios from 'axios'
 const BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
-  : '/api';
+  : '/api'
+export const api = axios.create({ baseURL: BASE })
 
-export const api = axios.create({
-  baseURL: BASE,
-  headers: { 'Content-Type': 'application/json' },
-});
-
-/** Получить список кейсов */
 export async function fetchCases() {
-  const res = await api.get('/cases');
-  return res.data; // [{ id, name, price, image_url, is_new? }, …]
+  const { data } = await api.get('/cases')
+  return data
 }
-
-/** Статус отключения кейса */
-export async function fetchCaseStatus(caseId) {
-  const res = await api.get(`/status/${caseId}`);
-  return res.data.success ? res.data.disabled : false;
+export async function fetchCaseStatus(id) {
+  const { data } = await api.get(`/status/${id}`)
+  return data.success ? data.disabled : false
 }
-
-/** Крутилка: запускает спин и возвращает { wonIndex, reward } */
-export async function spinRoulette(caseId, cost) {
-  const res = await api.post('/roulette/spin', { caseId, cost });
-  return res.data;
-}
-
-/** Элементы карусели для рулетки */
 export async function fetchCarouselItems(caseId) {
-  const res = await api.get('/roulette/items', { params: { caseId } });
-  return res.data.items;
+  const { data } = await api.get('/roulette/items', { params: { caseId } })
+  return data.items
 }
-
-/** Шансы выпадения для рулетки */
-export async function fetchChanceItems(caseId) {
-  const res = await api.get('/roulette/chances', { params: { caseId } });
-  return res.data; // { rare: [ … ], common: [ … ] }
+export async function spinRoulette(caseId) {
+  const { data } = await api.post('/roulette/spin', { caseId })
+  return data
 }

@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { fetchCases } from '../config/api.js';
+import { useState, useEffect } from 'react'
+import { fetchCases } from '../config/api'
 
 export function useCases() {
-  const [cases, setCases] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cases, setCases] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let canceled = false;
+    let c = false
     fetchCases()
-      .then(data => { if (!canceled) setCases(data); })
-      .catch(() => { if (!canceled) setCases([]); })
-      .finally(() => { if (!canceled) setLoading(false); });
-    return () => { canceled = true; };
-  }, []);
+      .then(data => !c && setCases(data))
+      .catch(() => !c && setCases([]))
+      .finally(() => !c && setLoading(false))
+    return () => { c = true }
+  }, [])
 
-  return { cases, loading };
+  return { cases, loading }
 }

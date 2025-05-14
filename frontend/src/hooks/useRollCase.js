@@ -1,29 +1,22 @@
-import { useState } from 'react';
-import { API_BASE_URL } from '../config/api';
+import { useState } from 'react'
+import { spinRoulette } from '../config/api'
 
 export function useRollCase() {
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState(null);
-  const [result, setResult]       = useState(null);
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [result, setResult] = useState(null)
 
-  const roll = async (caseId, telegramId) => {
-    setLoading(true);
-    setError(null);
+  const roll = async (caseId) => {
+    setLoading(true)
     try {
-      const res = await fetch(`${API_BASE_URL}/open-case`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ case_id: caseId, telegram_id: telegramId })
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Server error');
-      setResult(json);
+      const res = await spinRoulette(caseId)
+      setResult(res)
     } catch (e) {
-      setError(e.message);
+      setError(e.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  return { roll, loading, error, result };
+  return { roll, loading, error, result }
 }
